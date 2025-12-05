@@ -1,0 +1,17 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# System files
+.DS_Store
+
+# Data and models
+data/raw/
+data/processed/
+models/
+
+# Config files
+config.py
