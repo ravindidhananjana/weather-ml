@@ -26,10 +26,7 @@ app.add_middleware(
 
 app = FastAPI(title="7-Day Temperature Forecast API 🚀")
 
-# ---------------- CONFIG ----------------
-MONGO_URI = "mongodb+srv://new-user-1:griinor%4078@cluster0.b8x6tip.mongodb.net/?appName=Cluster0"
-DB_NAME = "weather_database"
-COLLECTION_NAME = "weather_records"
+
 
 FEATURES = [
     'temperature_2m', 'relative_humidity_2m', 'pressure_msl', 'windspeed_10m',
