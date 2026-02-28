@@ -1,0 +1,25 @@
+{
+  "name": "weather-ml",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && uvicorn main:app --reload --port 8000",
+    "frontend": "cd frontend && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ravindidhananjana/weather-ml.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ravindidhananjana/weather-ml/issues"
+  },
+  "homepage": "https://github.com/ravindidhananjana/weather-ml#readme",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

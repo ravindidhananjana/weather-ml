@@ -1,17 +1,68 @@
+# -------------------------
 # Virtual environment
+# -------------------------
 venv/
+.env
+.env.*
 
-# Python cache
+# -------------------------
+# Python cache / bytecode
+# -------------------------
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
+# -------------------------
 # System files
+# -------------------------
 .DS_Store
+Thumbs.db
 
+# -------------------------
 # Data and models
+# -------------------------
 data/raw/
 data/processed/
 models/
+*.h5
+*.pkl
+*.joblib
+*.ckpt
+*.npz
 
-# Config files
+# -------------------------
+# Logs and temporary files
+# -------------------------
+*.log
+*.tmp
+*.bak
+
+# -------------------------
+# IDE / editor settings
+# -------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# -------------------------
+# FastAPI / testing / coverage
+# -------------------------
+*.db
+*.sqlite
+coverage/
+htmlcov/
+pytest_cache/
+__pypackages__/
+
+# -------------------------
+# Config / secrets
+# -------------------------
 config.py
+secrets.py
+credentials.json
+
+# -------------------------
+# Misc
+# -------------------------
+.ipynb_checkpoints/
