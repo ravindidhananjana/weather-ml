@@ -1,13 +1,10 @@
 {
-  "framework": "vite",
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/build",
   "rewrites": [
     {
-      "source": "/predict",
+      "src": "/predict",
       "destination": "/api/index"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ]
 }
