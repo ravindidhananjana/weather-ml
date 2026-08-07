@@ -1,10 +1,12 @@
 {
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/build",
   "rewrites": [
     {
-      "src": "/predict",
+      "source": "/predict",
       "destination": "/api/index"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
