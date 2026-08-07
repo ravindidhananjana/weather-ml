@@ -1,121 +1,95 @@
+# 🌤️ Weather-ML: 7-Day Temperature Forecasting System
 
+A full-stack machine learning weather forecasting platform that predicts the next 7 days of daily average temperatures using time-series ML models and live weather data.
 
-# 🌦 Weather-ML: 7-Day Temperature Forecasting System
-
-A full-stack machine learning system that predicts the next 7 days of average temperature using historical weather data.
-
-Built with **FastAPI + React + MongoDB + Scikit-learn**.
+Built with **FastAPI + React 19 + Recharts + MongoDB Atlas + Scikit-Learn**.
 
 ---
 
-## 🚀 Features
+## ✨ Features & Highlights
 
-* 📡 Real-time weather data ingestion (Open-Meteo API)
-* 🧠 Time-series ML model (Random Forest Regressor)s
-* 💾 MongoDB data storage
-* ⚡ FastAPI backend (REST API)
-* 🎨 React frontend for visualization
-* 🔁 Unified startup with `npm run dev`
+- **🧠 Time-Series Machine Learning Pipeline**: Trained model (Random Forest / XGBoost Regressor) using lag features, rolling statistics, and calendar features.
+- **📡 Real-Time Data Ingestion**: Live historical and real-time data integration via **Open-Meteo API** with automatic gap handling.
+- **🛡️ Resilient Failover Architecture**: Automatic fallback to real-time API queries if MongoDB Atlas connection or DNS resolution is unavailable.
+- **🎨 Glassmorphic Modern Dashboard**: Built with custom CSS, Google Fonts (*Outfit*, *Plus Jakarta Sans*, *Inter*), glowing glassmorphism cards, and responsive layouts.
+- **📈 Interactive Data Visualizations**: Interactive **Recharts** dashboard supporting both **Gradient Area View** and **Smooth Line View**, custom tooltips, weekly average reference indicators, and click-to-select day highlighting.
+- **⚡ One-Command Startup**: Concurrent execution of backend and frontend servers using `npm run dev`.
 
 ---
 
 ## 🏗️ Tech Stack
 
-### Backend
-
-* FastAPI
-* Uvicorn
-* Scikit-learn
-* Pandas
-* MongoDB
-
-### Frontend
-
-* React.js
-
-### Dev Tools
-
-* concurrently (runs backend + frontend together)
+| Domain | Technology |
+| :--- | :--- |
+| **Backend Framework** | [FastAPI](https://fastapi.tiangolo.com/) + Uvicorn |
+| **Machine Learning** | Scikit-Learn, Pandas, Joblib |
+| **Database** | MongoDB Atlas / PyMongo |
+| **Data Ingestion** | Open-Meteo Weather API |
+| **Frontend Framework** | React 19, Recharts, Custom Glassmorphism CSS |
+| **Dev Tooling** | `concurrently`, Python Virtual Environment |
 
 ---
 
-## 📁 Project Structure
+## 📁 Repository Structure
 
-```
+```text
 weather-ml/
-├─ backend/
-│  ├── data/
-│  │   ├── fetch_weather.py
-│  │   └── weather_db.py
-│  ├── db/
-│  │   └── mongo_loader.py
-│  ├── models/
-│  │   └── 7day_temp_model.pkl
-│  ├── notebooks/
-│  │   └── trainingModel.ipynb
-│  ├── main.py           ← FastAPI entry point
-│  └── config.py         ← Loads MongoDB credentials from .env
-├─ frontend/
-│  ├── public/
-│  └── src/
-├─ .env                  ← MongoDB URI & DB config (ignored by Git)
-├─ package.json
-├─ requirements.txt
-└─ README.md
+├── backend/
+│   ├── data/
+│   │   ├── fetch_weather.py      ← Open-Meteo API ingestion engine
+│   │   └── weather_db.py         ← MongoDB upsert & gap-proofing script
+│   ├── db/
+│   │   └── mongo_loader.py       ← MongoDB database connection helper
+│   ├── models/
+│   │   └── 7day_temp_model.pkl   ← Serialized ML forecast model
+│   ├── notebooks/
+│   │   └── trainingModel.ipynb   ← Jupyter notebook for model training
+│   ├── main.py                   ← FastAPI REST server & inference endpoint
+│   └── config.py                 ← Environment configuration loader
+├── frontend/
+│   ├── public/                   ← Index HTML & Google Fonts metadata
+│   └── src/
+│       ├── App.js                ← Glassmorphic Weather Dashboard & Recharts
+│       └── App.css               ← Responsive Glassmorphism Design System
+├── .env                          ← Environment variables (MongoDB URI & config)
+├── package.json                  ← Root package manager & npm scripts
+├── requirements.txt              ← Backend Python dependencies
+└── README.md
 ```
 
 ---
 
-## 🧠 Machine Learning Pipeline
+## 🔌 API Documentation (FastAPI)
 
-1. Fetch historical weather data
-2. Store data in MongoDB
-3. Feature engineering (lag features, rolling averages, calendar features)
-4. Train Random Forest Regressor
-5. Save model as `.pkl`
-6. Load model in FastAPI for inference
-7. Return 7-day temperature predictions via API
+### Endpoints
 
----
+#### 1. Root Health Check
+`GET /`
 
-## 🔌 API (FastAPI)
-
-### Run Backend
-
-```bash
-cd backend
-uvicorn main:app --reload --port 8000
+```json
+{
+  "message": "Weather ML API is running 🚀"
+}
 ```
 
-### Endpoint
+#### 2. Predict 7-Day Forecast
+`GET /predict`
 
-```
-GET /predict
-```
-
-### Example Response
+Returns a 7-day temperature forecast starting from the **current date (Today)**:
 
 ```json
 {
   "forecast": [
-    {"date": "2026-02-06", "temperature": 23.45},
-    {"date": "2026-02-07", "temperature": 24.12},
-    {"date": "2026-02-08", "temperature": 22.87},
-    {"date": "2026-02-09", "temperature": 23.01},
-    {"date": "2026-02-10", "temperature": 22.65},
-    {"date": "2026-02-11", "temperature": 23.78},
-    {"date": "2026-02-12", "temperature": 24.05}
+    {"date": "2026-08-07", "temperature": 23.79},
+    {"date": "2026-08-08", "temperature": 23.69},
+    {"date": "2026-08-09", "temperature": 23.63},
+    {"date": "2026-08-10", "temperature": 23.68},
+    {"date": "2026-08-11", "temperature": 23.67},
+    {"date": "2026-08-12", "temperature": 23.64},
+    {"date": "2026-08-13", "temperature": 23.68}
   ]
 }
 ```
-
----
-
-## 🖥️ Frontend
-
-* Runs on: `http://localhost:3000`
-* Communicates with FastAPI backend (`http://localhost:8000`)
-* Displays 7-day predictions visually
 
 ---
 
@@ -128,97 +102,67 @@ git clone https://github.com/ravindidhananjana/weather-ml.git
 cd weather-ml
 ```
 
-### 2️⃣ Backend Setup
-
-* Create a virtual environment:
+### 2️⃣ Backend Setup (Python Virtual Environment)
 
 ```bash
+# Create virtual environment
 python -m venv venv
-```
 
-* Activate the environment:
+# Activate virtual environment
+# Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# Linux / macOS:
+source venv/bin/activate
 
-```bash
-# Windows
-.\venv\Scripts\activate
-
-```
-
-* Install Python dependencies:
-
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-* Create a `.env` file in `backend/`:
+### 3️⃣ Environment Configuration
 
-```text
-MONGO_URI=your_mongodb_uri
-DB_NAME=weather_database
-COLLECTION_NAME=weather_records
+Create a `.env` file in the root directory:
+
+```env
+MONGO_URI="your_mongodb_connection_string"
+DB_NAME="weather_database"
+COLLECTION_NAME="weather_records"
 ```
 
-### 3️⃣ Frontend Setup
+### 4️⃣ Frontend Setup
 
 ```bash
 cd frontend
 npm install
+cd ..
 ```
 
-* Install concurrently for unified startup (if not already):
+---
 
-```bash
-npm install --save-dev concurrently
-```
+## 🚀 Running the Application
 
-### 4️⃣ Run the Application
+Start both the **FastAPI Backend** and **React Frontend** concurrently from the root directory:
 
 ```bash
 npm run dev
 ```
 
-* Starts FastAPI backend on port 8000
-* Starts React frontend on port 3000
-* Loads ML model and serves predictions
+- **Frontend Dashboard**: [http://localhost:3000](http://localhost:3000)
+- **Backend API**: [http://localhost:8000](http://localhost:8000)
+- **Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
-## 🌐 Application URLs
+## 📊 Machine Learning Pipeline
 
-* Frontend → [http://localhost:3000](http://localhost:3000)
-* Backend API → [http://localhost:8000](http://localhost:8000)
-* API Docs (Swagger) → [http://localhost:8000/docs](http://localhost:8000/docs)
-
----
-
-## 📊 Model Details
-
-* Model: Random Forest Regressor
-* Target: Average Daily Temperature
-* Forecast Horizon: 7 Days
-* Framework: Scikit-learn
-* Model file: `backend/models/7day_temp_model.pkl`
+1. **Data Collection**: Fetch historical hourly weather records (Temperature, Humidity, Pressure, Wind Speed, Cloud Cover, Rain).
+2. **Feature Engineering**:
+   - Lag features (`temp_lag_1`, `temp_lag_2`, `temp_lag_3`, `temp_lag_7`, `temp_lag_14`)
+   - Rolling statistics (`temp_roll_7`, `temp_roll_14`)
+   - Calendar features (`day_of_year`, `month`, `week_of_year`)
+3. **Model Inference**: Recursive multi-step daily temperature predictions for the upcoming 7-day horizon.
 
 ---
 
-## 🎯 Learning Outcomes
+## 📜 License
 
-This project demonstrates:
-
-* End-to-end ML deployment
-* Time-series forecasting
-* REST API development with FastAPI
-* Full-stack integration with React
-* Database design and usage with MongoDB
-* Model serialization & serving
-
----
-
-## 🔮 Future Improvements
-
-* LSTM or deep learning model for improved accuracy
-* Multi-city or global forecasting
-* Cloud deployment (Render / AWS)
-* Docker containerization
-* CI/CD integration
-
+Distributed under the ISC License.

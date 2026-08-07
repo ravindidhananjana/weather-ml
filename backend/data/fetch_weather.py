@@ -1,14 +1,17 @@
 import requests
 
 
+from datetime import datetime, timedelta
+
 # Function to fetch weather data from the Open-Meteo API
-def fetch_weather():
-    url = 'https://archive-api.open-meteo.com/v1/archive'
+def fetch_weather(days=40):
+    url = 'https://api.open-meteo.com/v1/forecast'
+    
     params = {
         'latitude': '7.284440',
         'longitude': '80.637466',
-        'start_date': '2025-12-31',
-        'end_date': '2026-02-05',
+        'past_days': days,
+        'forecast_days': 1,
         'hourly': [
             'temperature_2m',
             'relative_humidity_2m', 

@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "backend": "cd backend && uvicorn main:app --reload --port 8000",
+    "backend": "cd backend && ..\\venv\\Scripts\\python -m uvicorn main:app --reload --port 8000",
     "frontend": "cd frontend && npm start"
   },
   "repository": {

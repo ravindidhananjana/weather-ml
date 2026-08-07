@@ -1,14 +1,19 @@
+import os
+import sys
+from datetime import datetime, timedelta
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 import pandas as pd
 import joblib
-from datetime import timedelta
-from fastapi.middleware.cors import CORSMiddleware
+
 from config import MONGO_URI, DB_NAME, COLLECTION_NAME
-from pymongo import MongoClient
 
-app = FastAPI()
+# Ensure data package is importable
+sys.path.append(os.path.join(os.path.dirname(__file__), "data"))
+from fetch_weather import fetch_weather
 
+app = FastAPI(title="7-Day Temperature Forecast API 🚀")
 
 origins = [
     "http://localhost:3000",
@@ -24,9 +29,6 @@ app.add_middleware(
 )
 
 
-app = FastAPI(title="7-Day Temperature Forecast API 🚀")
-
-
 
 FEATURES = [
     'temperature_2m', 'relative_humidity_2m', 'pressure_msl', 'windspeed_10m',
@@ -36,10 +38,14 @@ FEATURES = [
 ]
 
 # ---------------- INIT ----------------
-client = MongoClient(MONGO_URI)
-collection = client[DB_NAME][COLLECTION_NAME]
+try:
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
+    collection = client[DB_NAME][COLLECTION_NAME]
+except Exception as e:
+    collection = None
 
-model = joblib.load("models/7day_temp_model.pkl")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "7day_temp_model.pkl")
+model = joblib.load(MODEL_PATH)
 
 # ---------------- HELPERS ----------------
 def hourly_to_daily(df):
@@ -90,15 +96,27 @@ def root():
 
 @app.get("/predict")
 def predict():
-    cursor = collection.find(
-        {},
-        {"_id": 0, "time": 1, "temperature_2m": 1, "relative_humidity_2m": 1,
-         "pressure_msl": 1, "windspeed_10m": 1, "cloudcover": 1, "rain": 1}
-    ).sort("time", -1).limit(24 * 40)  # last ~40 days hourly
+    data = []
+    if collection is not None:
+        try:
+            cursor = collection.find(
+                {},
+                {"_id": 0, "time": 1, "temperature_2m": 1, "relative_humidity_2m": 1,
+                 "pressure_msl": 1, "windspeed_10m": 1, "cloudcover": 1, "rain": 1}
+            ).sort("time", -1).limit(24 * 40)  # last ~40 days hourly
+            data = list(cursor)
+        except Exception as e:
+            print("MongoDB fetch error, falling back to Open-Meteo API:", e)
+            data = []
 
-    data = list(cursor)
     if len(data) < 24 * 20:
-        raise HTTPException(400, "Not enough hourly data")
+        try:
+            data = fetch_weather(days=40)
+        except Exception as e:
+            print("Fetch weather error:", e)
+
+    if len(data) < 24 * 20:
+        raise HTTPException(400, f"Not enough hourly data available (found {len(data)} records)")
 
     df = pd.DataFrame(data)
     df["time"] = pd.to_datetime(df["time"])
@@ -106,6 +124,9 @@ def predict():
     # Aggregate to daily + features
     daily_df = hourly_to_daily(df)
     feat_df = create_features(daily_df)
+    if feat_df.empty:
+        raise HTTPException(400, "Could not generate features from weather data")
+
     last_row = feat_df.iloc[-1]
 
     try:
@@ -113,7 +134,7 @@ def predict():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
 
-    start_date = daily_df["time"].max() + timedelta(days=1)
+    start_date = datetime.now().date()
     forecast = [
         {"date": (start_date + timedelta(days=i)).strftime("%Y-%m-%d"),
          "temperature": predictions[i]}
