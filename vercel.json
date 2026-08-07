@@ -3,7 +3,7 @@
   "outputDirectory": "frontend/build",
   "rewrites": [
     {
-      "sorce": "/predict",
+      "source": "/predict",
       "destination": "/api/index"
     }
   ]
