@@ -1,5 +1,4 @@
 import os
-import sys
 from datetime import datetime, timedelta
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,14 +9,16 @@ import joblib
 from config import MONGO_URI, DB_NAME, COLLECTION_NAME
 
 # Ensure data package is importable
-sys.path.append(os.path.join(os.path.dirname(__file__), "data"))
-from fetch_weather import fetch_weather
+
+# pyrefly: ignore [missing-import]
+from data.fetch_weather import fetch_weather
 
 app = FastAPI(title="7-Day Temperature Forecast API 🚀")
 
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    
 ]
 
 app.add_middleware(
